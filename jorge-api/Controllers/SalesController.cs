@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using jorge_api.Database;
 using jorge_api.Model;
+using System.Linq;
+using System.Reflection;
 
 namespace jorge_api.Controllers
 {
@@ -76,6 +78,53 @@ namespace jorge_api.Controllers
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        [HttpPost("create-sale")]
+        public async Task CreateSale([FromBody] DTO.CreateSale sale)
+        {
+            var productId = sale.Products.Select(x => x.ProductId);
+            var products = await _context.Products.Where(x => productId.Contains(x.Id)).ToListAsync();
+
+            if (!products.Any())
+                return;
+
+            SalesDetails[] sales = [];
+
+            foreach (var product in products)
+            {
+                var pQty = sale.Products.FirstOrDefault(x => x.ProductId.Equals(product.Id));
+
+                pQty = pQty == null ? new DTO.ProductCount() { Count = 0 } : pQty;
+
+                sales.Append(new SalesDetails()
+                {
+                    ProductId = product.Id,
+                    Quantity = pQty.Count,
+                    Subtotal = product.Price * (decimal)pQty.Count,
+                });
+            }
+
+            var addition = await _context.Sales.AddAsync(new Sales()
+            {
+                ClientId = sale.ClientId,
+                Total = sales.Select(x => x.Subtotal).Sum()
+            });
+
+            foreach (var item in sales)
+            {
+                item.SaleId = addition.Entity.Id;
+            }
+
+            await _context.SalesDetails.AddRangeAsync(sales);
+
+            await _context.SaveChangesAsync();
+        }
+
+        [HttpGet("get-report")]
+        public async Task<List<Sales>> GetReport()
+        {
+            return await _context.Sales.Include(x => x.Details).ThenInclude(x => x.Product).Include(x => x.Client).OrderByDescending(x => x.Id).ToListAsync();
         }
     }
 }
