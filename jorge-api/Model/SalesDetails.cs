@@ -8,9 +8,9 @@ namespace jorge_api.Model
         public decimal Subtotal { get; set; }
         public int ProductId { get; set; }
         [ForeignKey("ProductId")]
-        public Products Product { get; set; }
+        public virtual Products? Product { get; set; }
         public int SaleId { get; set; }
         [ForeignKey("SaleId")]
-        public Sales Sale { get; set; }
+        public virtual Sales? Sale { get; set; }
     }
 }

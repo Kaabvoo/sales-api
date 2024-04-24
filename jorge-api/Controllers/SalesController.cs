@@ -89,7 +89,7 @@ namespace jorge_api.Controllers
             if (!products.Any())
                 return;
 
-            SalesDetails[] sales = [];
+            List<SalesDetails> sales = new List<SalesDetails>();
 
             foreach (var product in products)
             {
@@ -97,7 +97,7 @@ namespace jorge_api.Controllers
 
                 pQty = pQty == null ? new DTO.ProductCount() { Count = 0 } : pQty;
 
-                sales.Append(new SalesDetails()
+                sales.Add(new SalesDetails()
                 {
                     ProductId = product.Id,
                     Quantity = pQty.Count,

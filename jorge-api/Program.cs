@@ -7,11 +7,28 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Use desired SQL Host, UserName, Password, and Database
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("server=sqlpreview,1433; user id=sa; password=yourStrong(!)Password;database=testdb;TrustServerCertificate=True"));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=tempdb;Trusted_Connection=True;TrustServerCertificate=true;"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
 
 
 var app = builder.Build();
@@ -26,6 +43,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("AllowAll");
 
 app.MapControllers();
 
