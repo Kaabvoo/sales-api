@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using jorge_api.Database;
 using jorge_api.Model;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace jorge_api.Controllers
 {
@@ -50,19 +51,21 @@ namespace jorge_api.Controllers
         }
 
         [HttpPatch]
-        public async Task<Client> Edit([FromQuery] int id, [FromBody] Client edit)
+        public async Task<Client?> Edit([FromQuery] int id, [FromBody] Client edit)
         {
             if (id != edit.Id)
                 return new Client();
 
-            if (await _context.Client.FindAsync(id) != null)
+            var entity = await _context.Client.FindAsync(id);
+
+            if (entity == null)
                 return new Client();
 
+            entity.Name = edit.Name;
 
-            var client = _context.Update(edit);
             await _context.SaveChangesAsync();
 
-            return client.Entity as Client;
+            return entity;
         }
 
         [HttpDelete]

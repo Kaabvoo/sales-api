@@ -55,14 +55,17 @@ namespace jorge_api.Controllers
             if (id != edit.Id)
                 return new Products();
 
-            if (await _context.Products.FindAsync(id) != null)
+            var entity = await _context.Products.FindAsync(id);
+
+            if (entity == null)
                 return new Products();
 
+            entity.Name = edit.Name;
+            entity.Price = edit.Price;
 
-            var Products = _context.Update(edit);
             await _context.SaveChangesAsync();
 
-            return Products.Entity as Products;
+            return entity;
         }
 
         [HttpDelete]
