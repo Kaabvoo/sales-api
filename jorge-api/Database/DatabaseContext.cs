@@ -12,6 +12,7 @@ namespace jorge_api.Database
         public DbSet<Model.Products> Products { get; set; }
         public DbSet<Model.Sales> Sales { get; set; }
         public DbSet<Model.SalesDetails> SalesDetails { get; set; }
+        public DbSet<Model.Inventory> Inventories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +22,7 @@ namespace jorge_api.Database
             modelBuilder.Entity<Model.Products>().ToTable("Products");
             modelBuilder.Entity<Model.Sales>().ToTable("Sales");
             modelBuilder.Entity<Model.SalesDetails>().ToTable("SalesDetails");
+            modelBuilder.Entity<Model.Inventory>().ToTable("Inventory");
         }
     }
 }

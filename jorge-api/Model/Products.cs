@@ -5,7 +5,8 @@ namespace jorge_api.Model
 {
     public class Products : BaseModel
     {
-        public string? Description { get; set; } = null;
+        [Required]
+        public string Name { get; set; }
         [Required]
         public decimal Price { get; set; }
     }
