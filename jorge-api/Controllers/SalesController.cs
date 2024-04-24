@@ -126,12 +126,7 @@ namespace jorge_api.Controllers
         [HttpGet("get-report")]
         public async Task<List<Sales>> GetReport()
         {
-            var sales = await _context.Sales.Include(x => x.Client).ToListAsync();
-
-            foreach(var sale in sales)
-            {
-                sale.Details = await _context.SalesDetails.Include(x => x.Product).Where(x => x.SaleId == sale.Id).ToListAsync();
-            }
+            var sales = await _context.Sales.Include(x => x.Client).Include(x => x.Details).ThenInclude(x => x.Product).ToListAsync();
             return sales;
         }
     }
