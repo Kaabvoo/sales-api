@@ -111,6 +111,8 @@ namespace jorge_api.Controllers
                 Total = sales.Select(x => x.Subtotal).Sum()
             });
 
+            await _context.SaveChangesAsync();
+
             foreach (var item in sales)
             {
                 item.SaleId = addition.Entity.Id;
