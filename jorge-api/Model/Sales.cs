@@ -8,6 +8,6 @@ namespace jorge_api.Model
         [ForeignKey("ClientId")]
         public virtual Client Client { get; set; }
         public decimal Total { get; set; }
-        public virtual SalesDetails[] Details { get; set; } = Array.Empty<SalesDetails>();
+        public virtual List<SalesDetails> Details { get; set; } = new List<SalesDetails>();
     }
 }
